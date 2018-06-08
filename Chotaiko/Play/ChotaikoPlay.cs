@@ -29,6 +29,16 @@ namespace Chotaiko.Play
         public const double PVConstant = 10;
 
         /// <summary>
+        /// Factor to multiply by PV upon incrementing AccValue
+        /// </summary>
+        public const double AccBonusFactor = 1.1;
+
+        /// <summary>
+        /// Factor to multiply by PV upon incrementing SpeedValue
+        /// </summary>
+        public const double SpeedBonusFactor = 1.03;
+
+        /// <summary>
         /// Objects in the play
         /// </summary>
         List<IChotaikoPlayObject> PlayObjects;
@@ -60,7 +70,7 @@ namespace Chotaiko.Play
         /// Calculates performance value (PV) based on the accuracies of each note
         /// </summary>
         /// <returns>Performance value</returns>
-        public double CalculatePerformanceValue()
+        public double CalculatePerformanceValue(ChotaikoChartInfo ChartInfo)
         {
             // Unweighted performance value
             double UnweightedPV = 0;
@@ -98,12 +108,12 @@ namespace Chotaiko.Play
                 UnweightedPV += AccumulatedPV;
             }
 
-            double WeightedPV = WeightPV(UnweightedPV, ChartLength);
+            double WeightedPV = WeightPV(UnweightedPV, ChartLength, ChartInfo);
 
             return WeightedPV;
         }
 
-        private double WeightPV (double UnweightedPV, TimeSpan ChartLength)
+        private double WeightPV (double UnweightedPV, TimeSpan ChartLength, ChotaikoChartInfo ChartInfo)
         {
             double WeightedPV = UnweightedPV;
 
@@ -116,6 +126,12 @@ namespace Chotaiko.Play
             // Apply length bonus
             double LengthBonus = -(Math.Pow(LengthWeight, -ChartLength.TotalMilliseconds)) + 1;
             WeightedPV *= LengthBonus;
+
+            // Apply accuracy bonus
+            WeightedPV *= AccBonus(ChartInfo.AccValue);
+
+            // Apply speed bonus
+            WeightedPV *= SpeedBonus(ChartInfo.SpeedValue);
 
             // Multiply by PV constant
             WeightedPV *= PVConstant;
@@ -163,6 +179,25 @@ namespace Chotaiko.Play
         private double IntegratePVDecay (double x)
         {
             return -Math.Pow(2, -x) / Math.Log(2);
+        }
+
+        /// <summary>
+        /// Calculates accuracy bonus
+        /// </summary>
+        /// <param name="AccValue">Accuracy value</param>
+        /// <returns>Bonus to multiply accuracy by</returns>
+        private double AccBonus(double AccValue)
+        {
+            return Math.Pow(AccBonusFactor, AccValue);
+        }
+        /// <summary>
+        /// Calculates speed bonus
+        /// </summary>
+        /// <param name="SpeedValue">Speed value</param>
+        /// <returns>Bonus to multiply speed by</returns>
+        private double SpeedBonus (double SpeedValue)
+        {
+            return Math.Pow(SpeedBonusFactor, SpeedValue);
         }
     }
 }

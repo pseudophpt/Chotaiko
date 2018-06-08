@@ -136,7 +136,7 @@ namespace Chotaiko
 
             if (CurrentID == Chart.Objects.Count && OnScreenObjects.Count == 0)
             {
-                Console.WriteLine(CurrentPlay.CalculatePerformanceValue());
+                Console.WriteLine(CurrentPlay.CalculatePerformanceValue(Chart.ChartInfo));
             }
         }
 
