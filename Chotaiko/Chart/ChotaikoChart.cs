@@ -72,8 +72,12 @@ namespace Chotaiko.Chart
                         if (NoteOffset <= LastOffset) throw new ArgumentException("Beats not in order.");
                         LastOffset = NoteOffset;
 
+                        // Theta value
+                        String ThetaString = ChartFileStream.ReadLine();
+                        double Theta = Convert.ToDouble(ThetaString);
+
                         // Create a new note
-                        ChotaikoChartBeat Note = new ChotaikoChartBeat(NoteID, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
+                        ChotaikoChartBeat Note = new ChotaikoChartBeat(NoteID, Theta, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
                         this.Objects.Add(Note);
 
                         NoteID++;

@@ -22,16 +22,23 @@ namespace Chotaiko.Chart
         /// ID of the note
         /// </summary>
         int NoteID;
+        
+        /// <summary>
+        /// Angle in standard position (0 to 1)
+        /// </summary>
+        double Theta;
 
         /// <summary>
         /// Creates new chart beat
         /// </summary>
         /// <param name="NoteID">ID of the note</param>
         /// <param name="Offset">Offset in time</param>
-        public ChotaikoChartBeat(int NoteID, TimeSpan Offset)
+        /// <param name="Theta">Angle in standard position (0 to 1)</param>
+        public ChotaikoChartBeat(int NoteID, double Theta, TimeSpan Offset)
         {
             this.NoteID = NoteID;
             this.Offset = Offset;
+            this.Theta = Theta;
         }
 
         public IChotaikoGameObject AsGameObject()
