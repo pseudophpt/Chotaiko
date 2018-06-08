@@ -43,7 +43,7 @@ namespace Chotaiko.Chart
 
         public IChotaikoGameObject AsGameObject()
         {
-            return new ChotaikoGameBeat(this.Offset, this.NoteID);
+            return new ChotaikoGameBeat(this.Offset, this.NoteID, this.Theta);
         }
 
         public IChotaikoPlayObject AsPlayObject()

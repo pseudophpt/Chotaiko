@@ -33,23 +33,39 @@ namespace Chotaiko.Chart
             {
                 this.Objects = new List<IChotaikoChartObject>();
 
-                // Read first line
-                String AccString = ChartFileStream.ReadLine();
+                double AccValue = 0;
+                double SpeedValue = 0;
+                double BPM = 0;
 
-                // Convert to double and parse standard deviation
-                double AccValue = Convert.ToDouble(AccString);
+                // Parse properties
+                while (true)
+                {
+                    String Line = ChartFileStream.ReadLine();
 
-                // Read second line
-                String SpeedString = ChartFileStream.ReadLine();
+                    String[] Words = Line.Split(' ');
 
-                // Convert to double and parse standard deviation
-                double SpeedValue = Convert.ToDouble(SpeedString);
+                    // Empty line
+                    if (Words.Length == 0) break;
 
-                // Read third line
-                String BPMString = ChartFileStream.ReadLine();
+                    String Properties = Words[0];
 
-                // Convert to double and parse standard deviation
-                double BPM = Convert.ToDouble(BPMString);
+                    // If notes, exit properties loop
+                    if (Properties.Equals("Notes:")) break;
+
+                    // No value
+                    if (Words.Length < 2) break;
+
+                    String Value = Words[1];
+
+                    // Set accuracy value
+                    if (Properties.Equals("AccValue:")) AccValue = Convert.ToDouble(Value);
+
+                    // Set speed value
+                    else if (Properties.Equals("SpeedValue:")) SpeedValue = Convert.ToDouble(Value);
+
+                    // Set bpm
+                    else if (Properties.Equals("BPM:")) BPM = Convert.ToDouble(Value);
+                }
 
                 // Create chart info
                 ChartInfo = new ChotaikoChartInfo(AccValue, BPM, SpeedValue);
@@ -61,11 +77,17 @@ namespace Chotaiko.Chart
                 while (!ChartFileStream.EndOfStream)
                 {
                     // Type of note
-                    String NoteType = ChartFileStream.ReadLine();
-                    if (NoteType.Equals("Beat"))
+                    String NoteString = ChartFileStream.ReadLine();
+
+                    String[] NoteParams = NoteString.Split(' ');
+
+                    if (NoteParams[0].Equals("Beat"))
                     {
+                        // Check parameter size
+                        if (NoteParams.Length != 3) throw new ArgumentException("Invalid param count");
+
                         // Offset in map
-                        String NoteOffsetString = ChartFileStream.ReadLine();
+                        String NoteOffsetString = NoteParams[1];
                         double NoteOffset = Convert.ToDouble(NoteOffsetString);
 
                         // If beats are not in order, the chart is in the wrong format
@@ -73,11 +95,31 @@ namespace Chotaiko.Chart
                         LastOffset = NoteOffset;
 
                         // Theta value
-                        String ThetaString = ChartFileStream.ReadLine();
+                        String ThetaString = NoteParams[2];
                         double Theta = Convert.ToDouble(ThetaString);
 
                         // Create a new note
                         ChotaikoChartBeat Note = new ChotaikoChartBeat(NoteID, Theta, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
+                        this.Objects.Add(Note);
+
+                        NoteID++;
+                    }
+
+                    if (NoteParams[0].Equals("Strum"))
+                    {
+                        // Check parameter size
+                        if (NoteParams.Length != 2) throw new ArgumentException("Invalid param count");
+
+                        // Offset in map
+                        String NoteOffsetString = NoteParams[1];
+                        double NoteOffset = Convert.ToDouble(NoteOffsetString);
+
+                        // If beats are not in order, the chart is in the wrong format
+                        if (NoteOffset <= LastOffset) throw new ArgumentException("Beats not in order.");
+                        LastOffset = NoteOffset;
+
+                        // Create a new note
+                        ChotaikoChartStrum Note = new ChotaikoChartStrum(NoteID, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
                         this.Objects.Add(Note);
 
                         NoteID++;

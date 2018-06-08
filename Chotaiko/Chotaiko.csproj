@@ -39,17 +39,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chart\ChotaikoChart.cs" />
+    <Compile Include="Chart\ChotaikoChartStrum.cs" />
     <Compile Include="Chart\ChotaikoChartBeat.cs" />
     <Compile Include="Chart\ChotaikoChartInfo.cs" />
     <Compile Include="Chart\IChotaikoChartObject.cs" />
     <Compile Include="Chotaiko.cs" />
     <Compile Include="ChotaikoUtilities.cs" />
+    <Compile Include="Game\ChotaikoGameStrum.cs" />
     <Compile Include="Game\ChotaikoGameBeat.cs" />
     <Compile Include="ChotaikoGameContext.cs" />
     <Compile Include="ChotaikoGlobalContext.cs" />
     <Compile Include="Game\IChotaikoGameObject.cs" />
     <Compile Include="Game\ChotaikoKey.cs" />
     <Compile Include="Play\ChotaikoPlay.cs" />
+    <Compile Include="Play\ChotaikoPlayStrum.cs" />
     <Compile Include="Play\ChotaikoPlayBeat.cs" />
     <Compile Include="Play\IChotaikoPlayObject.cs" />
   </ItemGroup>

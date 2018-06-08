@@ -1,35 +1,9 @@
-﻿10
-1
-240
-Beat
-1
-Beat
-2
-Beat
-3
-Beat
-4
-Beat
-5
-Beat
-6
-Beat
-7
-Beat
-8
-Beat
-9
-Beat
-10
-Beat
-11
-Beat
-12
-Beat
-13
-Beat
-14
-Beat
-15
-Beat
-16
+﻿AccValue: 10
+SpeedValue: 10
+BPM: 20
+
+Notes:
+Beat 1 0.5
+Beat 2 0.5
+Strum 3
+Beat 4 0.5

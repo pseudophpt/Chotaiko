@@ -34,13 +34,19 @@ namespace Chotaiko.Game
         private int Accuracy;
 
         /// <summary>
+        /// Angle in standard position (0 to 1)
+        /// </summary>
+        double Theta;
+
+        /// <summary>
         /// Creates new game beat
         /// </summary>
         /// <param name="Offset">Offset of beat</param>
-        public ChotaikoGameBeat(TimeSpan Offset, int NoteID)
+        public ChotaikoGameBeat(TimeSpan Offset, int NoteID, double Theta)
         {
             this.Offset = Offset;
             this.NoteID = NoteID;
+            this.Theta = Theta;
             this.Accuracy = 0;
         }
 
@@ -62,7 +68,7 @@ namespace Chotaiko.Game
                 for (int i = 0; i < ErrorPercent; i++) Console.Write("|");
                 Console.WriteLine();
             }*/
-            Console.WriteLine(CurrentOffset);
+            Console.WriteLine("Beat with angle " + this.Theta + " ID " + this.NoteID);
         }
 
         public int GetID()
