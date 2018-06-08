@@ -75,7 +75,7 @@ namespace Chotaiko.Chart
             this.SpeedValue = SpeedValue;
 
             // HitRange = AccConstant * AccFactor^AccValue
-            this.HitRange = TimeSpan.FromMilliseconds(100 * Math.Pow(AccFactor, this.AccValue));
+            this.HitRange = TimeSpan.FromMilliseconds(AccConstant * Math.Pow(AccFactor, this.AccValue));
 
             // ScreenInterval = AccConstant * SpeedFactor^SpeedValue
             this.ScreenInterval = TimeSpan.FromMilliseconds(SpeedConstant * Math.Pow(SpeedFactor, this.SpeedValue));

@@ -51,7 +51,7 @@ namespace Chotaiko.Game
 
         public void Draw(TimeSpan CurrentOffset, ChotaikoChartInfo ChartInfo)
         {
-            // Error
+            /*// Error
             double Error = -(CurrentOffset - this.Offset).TotalMilliseconds;
 
             // Error percentage
@@ -61,8 +61,8 @@ namespace Chotaiko.Game
             {
                 for (int i = 0; i < ErrorPercent; i++) Console.Write("|");
                 Console.WriteLine();
-            }
-
+            }*/
+            Console.WriteLine(CurrentOffset);
         }
 
         public int GetID()
