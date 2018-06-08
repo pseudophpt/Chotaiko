@@ -24,7 +24,7 @@ namespace Chotaiko.Chart
         /// <summary>
         /// Value of hit range at AccValue 0
         /// </summary>
-        public const double AccConstant = 450;
+        public const double AccConstant = 1000;
 
         /// <summary>
         /// Value of screen interval at SpeedValue 0
