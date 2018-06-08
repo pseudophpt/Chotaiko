@@ -12,6 +12,26 @@ namespace Chotaiko.Chart
     class ChotaikoChartInfo
     {
         /// <summary>
+        /// Factor by which to multiply hit range for an increment in AccValue
+        /// </summary>
+        public const double AccFactor = 0.9;
+
+        /// <summary>
+        /// Factor by which to multiply screen interval for an increment in SpeedValue
+        /// </summary>
+        public const double SpeedFactor = 0.8;
+
+        /// <summary>
+        /// Value of hit range at AccValue 0
+        /// </summary>
+        public const double AccConstant = 450;
+
+        /// <summary>
+        /// Value of screen interval at SpeedValue 0
+        /// </summary>
+        public const double SpeedConstant = 2000;
+
+        /// <summary>
         /// The accuracy value as provided in the chart file.
         /// </summary>
         public double AccValue { get; }
@@ -54,11 +74,11 @@ namespace Chotaiko.Chart
             this.BPM = BPM;
             this.SpeedValue = SpeedValue;
 
-            // HitRange = 100 / (AccValue ^ 0.7)
-            this.HitRange = TimeSpan.FromMilliseconds(100 / Math.Pow(this.AccValue, 0.7));
+            // HitRange = AccConstant * AccFactor^AccValue
+            this.HitRange = TimeSpan.FromMilliseconds(100 * Math.Pow(AccFactor, this.AccValue));
 
-            // ScreenInterval = 2200 / SpeedValue
-            this.ScreenInterval = TimeSpan.FromMilliseconds(2200 / this.SpeedValue);
+            // ScreenInterval = AccConstant * SpeedFactor^SpeedValue
+            this.ScreenInterval = TimeSpan.FromMilliseconds(SpeedConstant * Math.Pow(SpeedFactor, this.SpeedValue));
 
             this.BeatTime = TimeSpan.FromMinutes(1 / this.BPM);
         }
