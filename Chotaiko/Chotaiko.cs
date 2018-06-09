@@ -62,8 +62,11 @@ namespace Chotaiko
 
         static void ChotaikoOnKeyDown(object sender, KeyboardKeyEventArgs e)
         {
-            ChotaikoKey l = new ChotaikoKey();
-            ChotaikoGlobalContext.OnPress(l);
+            if (!e.IsRepeat)
+            {
+                ChotaikoKey l = new ChotaikoKey();
+                ChotaikoGlobalContext.OnPress(l);
+            }
         }
 
         [STAThread]
