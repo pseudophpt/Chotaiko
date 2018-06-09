@@ -37,9 +37,14 @@ namespace Chotaiko.Chart
         public double AccValue { get; }
 
         /// <summary>
-        /// The BPM value as provided in the chart file.
+        /// The minimum BPM value as provided in the chart file.
         /// </summary>
-        public double BPM { get; }
+        public double MinimumBPM { get; set;  }
+
+        /// <summary>
+        /// The maximum BPM value as provided in the chart file.
+        /// </summary>
+        public double MaximumBPM { get; set;  }
 
         /// <summary>
         /// The speed value as provided in the chart file.
@@ -68,10 +73,9 @@ namespace Chotaiko.Chart
         /// <param name="AccValue">Accuracy value</param>
         /// <param name="BPM">BPM value</param>
         /// <param name="SpeedValue">Speed value</param>
-        public ChotaikoChartInfo(double AccValue, double BPM, double SpeedValue)
+        public ChotaikoChartInfo(double AccValue, double SpeedValue)
         {
             this.AccValue = AccValue;
-            this.BPM = BPM;
             this.SpeedValue = SpeedValue;
 
             // HitRange = AccConstant * AccFactor^AccValue
@@ -80,7 +84,22 @@ namespace Chotaiko.Chart
             // ScreenInterval = AccConstant * SpeedFactor^SpeedValue
             this.ScreenInterval = TimeSpan.FromMilliseconds(SpeedConstant * Math.Pow(SpeedFactor, this.SpeedValue));
 
-            this.BeatTime = TimeSpan.FromMinutes(1 / this.BPM);
+            // Mark uninitialized
+            this.MinimumBPM = -1;
+            this.MaximumBPM = -1;
+        }
+
+        /// <summary>
+        /// Updates BPM minimum and maximum statistics
+        /// </summary>
+        /// <param name="BPM">BPM Value</param>
+        public void UpdateBPM(double BPM)
+        {
+            if (this.MinimumBPM < 0) this.MinimumBPM = BPM;
+            if (this.MaximumBPM < 0) this.MaximumBPM = BPM;
+
+            if (BPM < MinimumBPM) MinimumBPM = BPM;
+            if (BPM > MaximumBPM) MaximumBPM = BPM;
         }
     }
 }

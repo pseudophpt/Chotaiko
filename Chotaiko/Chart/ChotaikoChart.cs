@@ -35,7 +35,6 @@ namespace Chotaiko.Chart
 
                 double AccValue = 0;
                 double SpeedValue = 0;
-                double BPM = 0;
 
                 // Parse properties
                 while (true)
@@ -62,16 +61,20 @@ namespace Chotaiko.Chart
 
                     // Set speed value
                     else if (Properties.Equals("SpeedValue:")) SpeedValue = Convert.ToDouble(Value);
-
-                    // Set bpm
-                    else if (Properties.Equals("BPM:")) BPM = Convert.ToDouble(Value);
                 }
 
                 // Create chart info
-                ChartInfo = new ChotaikoChartInfo(AccValue, BPM, SpeedValue);
+                ChartInfo = new ChotaikoChartInfo(AccValue, SpeedValue);
 
-                int NoteID = 0; // ID of note
-                double LastOffset = -1;
+                // Current note ID
+                int NoteID = 0;
+
+                // Offset of previous note
+                TimeSpan LastOffset = TimeSpan.Zero;
+
+                // Time between beats and offset
+                TimeSpan? BeatTime = null;
+                TimeSpan? Offset = null;
 
                 // Parse each object
                 while (!ChartFileStream.EndOfStream)
@@ -88,10 +91,13 @@ namespace Chotaiko.Chart
 
                         // Offset in map
                         String NoteOffsetString = NoteParams[1];
-                        double NoteOffset = Convert.ToDouble(NoteOffsetString);
+                        double NoteOffsetValue = Convert.ToDouble(NoteOffsetString);
+
+                        // Calculate beat location
+                        TimeSpan NoteOffset = Offset.Value + TimeSpan.FromTicks((long)(BeatTime.Value.Ticks * NoteOffsetValue));
 
                         // If beats are not in order, the chart is in the wrong format
-                        if (NoteOffset <= LastOffset) throw new ArgumentException("Beats not in order.");
+                        if (NoteOffset < LastOffset) throw new ArgumentException("Beats not in order.");
                         LastOffset = NoteOffset;
 
                         // Theta value
@@ -99,7 +105,7 @@ namespace Chotaiko.Chart
                         double Theta = Convert.ToDouble(ThetaString);
 
                         // Create a new note
-                        ChotaikoChartBeat Note = new ChotaikoChartBeat(NoteID, Theta, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
+                        ChotaikoChartBeat Note = new ChotaikoChartBeat(NoteID, Theta, NoteOffset);
                         this.Objects.Add(Note);
 
                         NoteID++;
@@ -112,17 +118,38 @@ namespace Chotaiko.Chart
 
                         // Offset in map
                         String NoteOffsetString = NoteParams[1];
-                        double NoteOffset = Convert.ToDouble(NoteOffsetString);
+                        double NoteOffsetValue = Convert.ToDouble(NoteOffsetString);
+
+                        // Calculate beat location
+                        TimeSpan NoteOffset = Offset.Value + TimeSpan.FromTicks((long)(BeatTime.Value.Ticks * NoteOffsetValue));
 
                         // If beats are not in order, the chart is in the wrong format
-                        if (NoteOffset <= LastOffset) throw new ArgumentException("Beats not in order.");
+                        if (NoteOffset < LastOffset) throw new ArgumentException("Beats not in order.");
                         LastOffset = NoteOffset;
 
                         // Create a new note
-                        ChotaikoChartStrum Note = new ChotaikoChartStrum(NoteID, TimeSpan.FromTicks((long)(ChartInfo.BeatTime.Ticks * NoteOffset)));
+                        ChotaikoChartStrum Note = new ChotaikoChartStrum(NoteID, NoteOffset);
                         this.Objects.Add(Note);
 
                         NoteID++;
+                    }
+
+                    if (NoteParams[0].Equals("BPM"))
+                    {
+                        // Check parameter size
+                        if (NoteParams.Length != 3) throw new ArgumentException("Invalid param count");
+
+                        // Offset in map
+                        String OffsetString = NoteParams[1];
+                        Offset = TimeSpan.FromMilliseconds(Convert.ToInt32(OffsetString));
+
+                        // BPM in map
+                        String BPMString = NoteParams[2];
+                        double BPM = Convert.ToDouble(BPMString);
+                        BeatTime = TimeSpan.FromSeconds(60 / BPM);
+
+                        // Update Chart BPM
+                        ChartInfo.UpdateBPM(BPM);
                     }
                 }
             }
